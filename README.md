@@ -1,6 +1,6 @@
 # cheaters-graphql
 
-GraphQL for the unfaithful
+A lightweight alternative for consuming GraphQL. Zero caching, zero bells. Zero Bloat.
 
 [Code of Conduct](./CODE_OF_CONDUCT.md) |
 [Contribution Guidelines](./.github/CONTRIBUTING.md)
