@@ -4,7 +4,8 @@
   "description": "A lightweight alternative for consuming GraphQL. Zero caching, zero bells. Zero Bloat.",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "npx pack build"
   },
   "repository": {
     "type": "git",
@@ -17,9 +18,31 @@
   },
   "homepage": "https://github.com/manifoldco/gql-zero#readme",
   "@pika/pack": {
-    "pipeline": []
+    "pipeline": [
+      [
+        "@pika/plugin-standard-pkg",
+        {
+          "exclude": [
+            "**/*.test.ts"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-types"
+      ]
+    ]
   },
   "devDependencies": {
+    "@pika/plugin-build-node": "^0.3.16",
+    "@pika/plugin-build-types": "^0.3.16",
+    "@pika/plugin-build-web": "^0.3.16",
+    "@pika/plugin-standard-pkg": "^0.3.16",
     "@types/jest": "^24.0.13",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",

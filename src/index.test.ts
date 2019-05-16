@@ -1,4 +1,4 @@
-import { gql } from "./gql-zero";
+import { gql } from "./index";
 
 it("returns the expected GraphQL query string", () => {
   const id = 12345;
