@@ -3,4 +3,4 @@ interface StringCompatible {
 }
 
 export const gql = (str: TemplateStringsArray, ...values: StringCompatible[]) =>
-  str.reduce((result, s, i) => `${result}${s}${values[i] || ""}`, "");
+  str.reduce((result, s, i) => `${result}${s}${values[i] || ''}`, '');
