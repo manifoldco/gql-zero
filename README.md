@@ -158,26 +158,25 @@ a simple string template!** It doesn’t come close to the features in other
 libraries. In that regard, this library is a slimmer version of
 [graphql-tag][graphql-tag]
 
-Still, this chart is a handy reference because many people often don’t
-consider the full weight of their GraphQL solution on the client based on
-deps and peerDeps.
+Still, this chart is a good reference because few consider the full weight of
+their GraphQL solution on the client based on deps and peerDeps.
 
 If you don’t need the extra features, don’t force your users to download
 them!
 
-| Library                |   Total weight | Avoids `graphql` |
-| :--------------------- | -------------: | :--------------: |
-| `@manifoldco/gql-zero` | 🔥 `0.4 KB` 🔥 |        ✅        |
-| `@apollo/react-hooks`  |      `~ 60 KB` |        ✅        |
-| `apollo-boost` \*      |     `263.6 KB` |        🚫        |
-| `apollo-client`        |      `56.9 KB` |        ✅        |
-| `apollo-react`         |      `71.6 KB` |        ✅        |
-| `graphql-tag`          |       `1.9 KB` |        ✅        |
-| `micro-graphql-react`  |       `8.8 KB` |        ✅        |
-| `urql`                 |      `21.5 KB` |        ✅        |
+| Library                |   Total weight | Weight + `graphql` |
+| :--------------------- | -------------: | :----------------: |
+| `@manifoldco/gql-zero` | 🔥 `0.4 KB` 🔥 |        N/A         |
+| `@apollo/react-hooks`  |      `~ 60 KB` |    `~ 232.7 KB`    |
+| `apollo-boost`         |      `90.9 KB` |     `263.6 KB`     |
+| `apollo-client`        |      `56.9 KB` |     `229.6 KB`     |
+| `apollo-react`         |      `71.6 KB` |     `244.3 KB`     |
+| `graphql-tag`          |       `1.9 KB` |      `174.6`       |
+| `micro-graphql-react`  |       `8.8 KB` |        N/A         |
+| `urql`                 |      `21.5 KB` |     `194.2 KB`     |
 
-\* Weight includes the peerDep `graphql` (`172.7 KB`). Actual bundled weight
-may be lower, if some of it tree-shakes out.
+_Note: most tools listed depend on `graphql-tag`, which requires `graphql`
+as a peerDep. If `graphql-tag` is required, then so is `graphql`._
 
 ## About
 
