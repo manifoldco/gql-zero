@@ -11,7 +11,7 @@ Bloat.
 npm i @manifoldco/gql-zero
 ```
 
-### 🧁 Using Vanilla JS fetch
+### 🧁 Using Vanilla JS fetch (TS types added for convenience)
 
 ```ts
 import gql from '@manifoldco/gql-zero';
