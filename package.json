@@ -2,7 +2,6 @@
   "name": "@manifoldco/gql-zero",
   "version": "0.1.0",
   "description": "A lightweight alternative for consuming GraphQL. Zero caching, zero bells. Zero Bloat.",
-  "main": "index.js",
   "scripts": {
     "test": "jest",
     "build": "pack build"
@@ -11,7 +10,16 @@
     "type": "git",
     "url": "git+https://github.com/manifoldco/gql-zero.git"
   },
-  "author": "",
+  "keywords": [
+    "graphql",
+    "gql",
+    "esm",
+    "es modules",
+    "react",
+    "lightweight",
+    "zero"
+  ],
+  "author": "@manifoldco",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/manifoldco/gql-zero/issues"
