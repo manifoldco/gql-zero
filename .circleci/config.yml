@@ -1,0 +1,201 @@
+# Javascript Node CircleCI 2.0 configuration file
+
+version: 2.1
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:12
+  environment:
+    - NODE_ENV: development # CircleCI needs devDeps
+
+orbs:
+  happo: happo/happo@2.0.0
+
+commands:
+  # npm install
+  setup:
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npmcache-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: npmcache-{{ checksum "package.json" }}
+
+jobs:
+  # Run bundlesize (generally the fastest, so this runs first)
+  bundlesize:
+    <<: *defaults
+    steps:
+      - setup
+      - run: npm run bundlesize
+      - save-build
+
+  # Lint
+  lint:
+    <<: *defaults
+    steps:
+      - setup
+      - run: npm run lint
+
+  # Deploy version to npm
+  npm-publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - setup
+      - run: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      - run: npm run publish
+      - save-pkg-build
+
+  # Test
+  test:
+    <<: *defaults
+    steps:
+      - setup
+      - setup-puppeteer
+      - run: npm run test:coverage
+      - save-build
+      - run: npx codecov
+
+  # Publish packages to js.cdn.manifold.co
+  # this is always run after npm-publish so the ./pkg file will be available.
+  cdn-publish:
+    parameters:
+      latest:
+        type: boolean
+        default: false
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - restore_cache:
+          keys:
+            - npmpkgcache-{{ .Revision }}
+      - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+      - run:
+          gsutil -m cp /home/circleci/project/pkg/*
+          gs://manifold-js/@manifoldco/gql-zero@${CIRCLE_TAG//v}
+      - run:
+          gsutil -m cp -r /home/circleci/project/pkg/dist
+          gs://manifold-js/@manifoldco/gql-zero@${CIRCLE_TAG//v}
+      - when:
+          condition: << parameters.latest >>
+          steps:
+            - run:
+                gsutil -m rsync -r gs://manifold-js/@manifoldco/gql-zero@${CIRCLE_TAG//v}
+                gs://manifold-js/@manifoldco/gql-zero
+            - run:
+                gcloud compute url-maps invalidate-cdn-cache manifold-js-cdn-urlmap --path
+                "/@manifoldco/gql-zero/*" --async
+
+workflows:
+  version: 2
+
+  # Normal workflow for untagged PRs
+  branch:
+    jobs:
+      - bundlesize
+      - lint
+      - test
+
+  # Prerelease (only fires if Git tag contains hyphen + npm tag)
+  prerelease:
+    jobs:
+      - bundlesize:
+          filters: # the same filters are required on ALL jobs here
+            branches:
+              ignore: /.*/ # this is necessary along with tags for some reason
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+-.*$/
+      - lint:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+-.*$/
+      - test:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+-.*$/
+      - npm-publish: # no approval needed for prerelease
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+-.*$/
+          requires:
+            - bundlesize
+            - lint
+            - test
+      - cdn-publish:
+          latest: false
+          context: gcp-cdn-auth
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+-.*$/
+          requires:
+            - npm-publish
+
+  # Final release (only fires if Git tag is a stable release)
+  release:
+    jobs:
+      - bundlesize:
+          filters: # the same filters are required on ALL jobs here
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+      - lint:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+      - test:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+      - confirm:
+          type: approval # manual approval step mandatory for final release
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          requires:
+            - bundlesize
+            - lint
+            - test
+      - npm-publish:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          requires:
+            - confirm
+      - cdn-publish:
+          latest: true
+          context: gcp-cdn-auth
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          requires:
+            - npm-publish
