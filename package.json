@@ -2,10 +2,6 @@
   "name": "@manifoldco/gql-zero",
   "version": "0.1.0",
   "description": "A lightweight alternative for consuming GraphQL. Zero caching, zero bells. Zero Bloat.",
-  "scripts": {
-    "test": "jest",
-    "build": "pika build"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/manifoldco/gql-zero.git"
@@ -25,6 +21,13 @@
     "url": "https://github.com/manifoldco/gql-zero/issues"
   },
   "homepage": "https://github.com/manifoldco/gql-zero#readme",
+  "bundlesize": [
+    {
+      "path": "./pkg/dist-src/index.js",
+      "maxSize": "100B",
+      "compression": "none"
+    }
+  ],
   "@pika/pack": {
     "pipeline": [
       [
@@ -38,16 +41,31 @@
       ]
     ]
   },
+  "scripts": {
+    "build": "pika build",
+    "bundlesize": "npm run build && npx bundlesize",
+    "lint": "eslint --ext .ts src",
+    "test": "jest",
+    "version": "npm run build"
+  },
+  "dependencies": {
+    "moo": "^0.5.0"
+  },
   "devDependencies": {
     "@pika/pack": "^0.5.0",
     "@pika/plugin-build-node": "^0.6.1",
-    "@pika/plugin-build-web": "^0.6.0",
-    "@pika/plugin-standard-pkg": "^0.3.16",
-    "@pika/plugin-ts-standard-pkg": "^0.6.0",
-    "@types/jest": "^24.0.13",
-    "jest": "^24.8.0",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.4.5"
-  },
-  "dependencies": {}
+    "@pika/plugin-build-web": "^0.6.1",
+    "@pika/plugin-ts-standard-pkg": "^0.6.1",
+    "@types/jest": "^24.0.18",
+    "@types/moo": "^0.5.0",
+    "@typescript-eslint/eslint-plugin": "^2.3.1",
+    "@typescript-eslint/parser": "^2.3.1",
+    "eslint": "^6.4.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
+  }
 }

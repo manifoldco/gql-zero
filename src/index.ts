@@ -1,3 +1,5 @@
+export * from './minify';
+
 interface StringCompatible {
   toString(): string;
 }

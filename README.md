@@ -1,9 +1,10 @@
-[![GitHub release](https://img.shields.io/github/tag/manifoldco/gql-zero.svg?label=latest)](https://github.com/manifoldco/gql-zero/releases) [![Travis](https://img.shields.io/travis/manifoldco/gql-zero/master.svg)](https://travis-ci.org/manifoldco/gql-zero) [![License](https://img.shields.io/badge/license-BSD-blue.svg)](./LICENSE.md)
+[![GitHub release](https://img.shields.io/github/tag/manifoldco/gql-zero.svg?label=latest)](https://github.com/manifoldco/gql-zero/releases)
+[![Travis](https://img.shields.io/travis/manifoldco/gql-zero/master.svg)](https://travis-ci.org/manifoldco/gql-zero)
+[![License](https://img.shields.io/badge/license-BSD-blue.svg)](./LICENSE.md)
 
 # ⚡️ gql-zero
 
-A `0.4 KB` alternative for consuming GraphQL. Zero caching, zero bells. Zero
-Bloat.
+A `0.3 KB` alternative for consuming GraphQL. Zero caching, zero bells. Zero Bloat.
 
 ## Usage
 
@@ -151,18 +152,35 @@ const ListPokemon: React.FunctionComponent = () => {
 export default ListPokemon;
 ```
 
+### Minification
+
+gql-zero can also minify queries, too:
+
+```js
+const query = gql`
+  query POKEMON {
+    pokemons(first: 151) {
+      number
+      name
+    }
+  }
+`;
+minify(query);
+```
+
+It’s worth noting that this is **runtime** minification, not **compile-time** minification. For that
+reason, you’d really only get benefit from this
+
 ## Comparison
 
-Is comparing gql-zero fair to compare to other libraries? **No! This is just
-a simple string template!** It doesn’t come close to the features in other
-libraries. In that regard, this library is a slimmer version of
-[graphql-tag][graphql-tag]
+Is comparing gql-zero fair to compare to other libraries? **No! This is just a simple string
+template!** It doesn’t come close to the features in other libraries. In that regard, this library
+is a slimmer version of [graphql-tag][graphql-tag]
 
-Still, this chart is a good reference because few consider the full weight of
-their GraphQL solution on the client based on deps and peerDeps.
+Still, this chart is a good reference because few consider the full weight of their GraphQL solution
+on the client based on deps and peerDeps.
 
-If you don’t need the extra features, don’t force your users to download
-them!
+If you don’t need the extra features, don’t force your users to download them!
 
 | Library                |   Total weight | Weight + `graphql` |
 | :--------------------- | -------------: | :----------------: |
@@ -175,8 +193,8 @@ them!
 | `micro-graphql-react`  |       `8.8 KB` |        N/A         |
 | `urql`                 |      `21.5 KB` |     `194.2 KB`     |
 
-_Note: most tools listed depend on `graphql-tag`, which requires `graphql`
-as a peerDep. If `graphql-tag` is required, then so is `graphql`._
+_Note: most tools listed depend on `graphql-tag`, which requires `graphql` as a peerDep. If
+`graphql-tag` is required, then so is `graphql`._
 
 ## About
 
